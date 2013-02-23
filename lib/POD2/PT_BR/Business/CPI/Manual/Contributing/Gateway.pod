@@ -1,0 +1,3 @@
+=head1 TODO
+
+Dicas de como criar uma nova gateway.
