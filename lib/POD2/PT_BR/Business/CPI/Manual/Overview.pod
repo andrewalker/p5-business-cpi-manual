@@ -1,0 +1,90 @@
+=encoding utf-8
+
+=head1 NOME
+
+Business::CPI::Manual::Overview - Visão geral do Business::CPI
+
+=head1 SINOPSE
+
+    # the objects are created with the same keys
+    my $paypal = Business::CPI->new(
+        gateway        => "PayPal",
+        receiver_email => "test@example.com",
+        ...
+    );
+    my $pagseguro = Business::CPI->new(
+        gateway        => "PagSeguro",
+        receiver_email => "test@example.com",
+        ...
+    );
+
+    # the method names and arguments are similar
+    my $pag_transactions = $pagseguro->query_transactions({
+        start_date => DateTime->now->subtract({ days => 5 }),
+        final_date => DateTime->now,
+    });
+    my $pay_transactions = $paypal->query_transactions({
+        start_date => DateTime->now->subtract({ days => 5 }),
+        final_date => DateTime->now,
+    });
+
+=head1 DESCRIÇÃO
+
+Business::CPI busca definir uma interface comum entre diversas API's de
+pagamento. Embora haja no CPAN diversos módulos para efetuar pagamentos online,
+e interagir com os provedores de pagamento, não existe uma forma padronizada e
+comum de se fazer isto. Isto é, é possível, por exemplo, receber notificações
+de alteração de status nos pagamentos do PayPal utilizando
+L<Business::PayPal::IPN>, ou pelo PagSeguro utilizando L<PagSeguro::Status>. No
+entanto, é necessário que sua aplicação esteja "ciente" de qual gateway está
+sendo utilizada, porque a interface dos módulos é completamente diferente.
+
+Business::CPI tenta minimizar estas diferenças, para que seja possível
+desacoplar de sua aplicação toda a interface com provedores de pagamento,
+deixando que Business::CPI lide com isto.
+
+=head1 OBJETIVOS
+
+Queremos com este módulo:
+
+=over 4
+
+=item *
+
+B<Segurança e confiabilidade.> Como software livre, sem suporte comercial, não
+podemos fornecer garantias com relação ao código do Business::CPI. Ainda assim,
+temos por objetivo que o sistema seja totalmente confiável, coberto por testes
+unitários e diversas técnicas de qualidade de softare. A comunidade de software
+livre possui um potencial de implementar segurança e confiabilidade muito
+maiores que softwares proprietários. Ele já está sendo utilizado em produção
+trazendo ótimos resultados.
+
+=item *
+
+B<Eficiente.> Desejamos que o módulo possa ser utilizado até mesmo em
+aplicações CGI, ou scripts modo texto, sem grandes impactos na performance.
+
+=item *
+
+B<Padronizado.> É impossível que consigamos 100% de padronização entre todos os
+drivers. Mesmo assim, Business::CPI almeja que as diferenças sejam mínimas,
+apenas em funcionalidades muito específicas de cada gateway.
+
+=item *
+
+B<Extensível.> Queremos fornecer ao usuário a capacidade de alterar a forma que
+o módulo funciona, aplicando-o à sua aplicação. Igualmente, para gateways com
+funcionalidades muito específicas, como citado no item anterior, queremos que
+seja possível alterar o padrão do CPI.
+
+=back
+
+=head1 PATROCÍNIO
+
+Agradeço a L<< Aware | http://www.aware.com.br >> por patrocinar o
+desenvolvimento inicial deste módulo.
+
+=head1 CAVEATS
+
+This is alpha software. The interface is unstable, and may change without
+notice.
