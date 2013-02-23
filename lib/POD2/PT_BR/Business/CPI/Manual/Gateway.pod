@@ -60,10 +60,6 @@ lembrar.
 
 =head1 MÉTODOS
 
-=head2 new_cart
-
-Instancia L<Business::CPI::Cart> conectado a esta gateway.
-
 =head2 query_transactions
 
 =over 4
@@ -141,3 +137,32 @@ Busca detalhes de uma determinada transação.
 Notificação do gateway, executado quando este envia um HTTP POST para a
 aplicação, e esta deve registrar uma mudança de status. Veja IPN do PayPal,
 notificações no PagSeguro, ou NASP no Moip, por exemplo.
+
+
+=head2 get_hidden_inputs
+
+Método auxiliar para geração do formulário de pagamento. Em vez de
+reescrevermos o C<get_form_to_pay()>, definimos esta sub para indicar
+quais são as chaves utilizadas pelo gateway.
+
+=over 4
+
+=item Argumentos: hashref com chaves: payment_id, buyer, items, cart
+
+=item Retorno: hash (NÃO UM HASHREF) com chaves sendo os nomes dos inputs
+utilizados pelo seu gateway.
+
+=back
+
+=head2 get_checkout_code
+
+Envia os dados do seu carrinho para o gateway, retornando a chave de
+redirecionamento do usuário para o gateway.
+
+=over 4
+
+=item Argumentos: hashref com chaves: payment_id, buyer, items, cart
+
+=item Retorno: string contendo a resposta do gateway
+
+
