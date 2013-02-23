@@ -1,0 +1,143 @@
+=encoding utf-8
+
+=head1 NOME
+
+Business::CPI::Manual::Gateway - Gateways no CPI
+
+=head1 DESCRIÇÃO
+
+Cada provedor de pagamento utilizado é implementado no CPI dentro do namespace
+Business::CPI::Gateway::*. Ele deve herdar de L<Business::CPI::Gateway::Base>,
+e deve implementar o conjunto de métodos descritos abaixo, seguindo padrões
+definidos neste manual. (Para saber mais sobre como desenvolver uma nova
+gateway, veja também L<Business::CPI::Manual::Contributing> e
+L<Business::CPI::Manual::Contributing::Gateway>.)
+
+=head2 Padrões adotados
+
+Toda a interface do CPI procura manter os itens descritos abaixo. Caso exista
+alguma funcionalidade extra que uma determinada gateway precise implementar,
+sugerimos que esta funcionalidade se mantenha de acordo com estas regras.
+
+=over 4
+
+=item *
+
+B<Inglês.> Queremos que o módulo possa ser usado por pessoas de todo o mundo, e
+que possa receber contribuições de pessoas com qualquer origem. Por isso, todo
+o código e a interface é em inglês.
+
+=item *
+
+B<Convenções da linguagem.> Há uma série de práticas bem difundidas na
+comunidade Perl. Por exemplo, utiliza-se nomes_com_underline ao invés de
+camelCase. Veja L<perlstyle> para mais recomendações.
+
+=item *
+
+B<Recursos da linguagem.> Ao lidar com datas, drivers nunca devem receber
+strings por parâmetro. Cada provedor espera que as datas estejam num formato
+diferente, timezone diferente. Ao contrário disso, utilize L<DateTime>.
+
+=item *
+
+B<Convenções internacionais.> Caso não haja um módulo para tratar a entrada,
+como L<DateTime>, tenta-se buscar convenções internacionais para padronizar a
+entrada. Por exemplo, em situações que tratam com "peso", utilizamos B<kg>,
+ainda que o provedor espere gramas ou libras. Escolhemos quilograma por causa
+do B<sistema métrico>, que determina que a medida padrão para peso é kg.
+
+=item *
+
+B<Nomes significativos.> Não são necessários nomes muito longos para os métodos
+e atributos. Evitamos palavras sobrando nos nomes (exemplo: dentro da classe
+Business::CPI::Item, se chamássemos o atributo "weight" de
+"weight_of_the_item", haveria várias palavras sobrando. É evidente que o peso
+se refere ao item). Igualmente, evitamos abreviações, que são difíceis de
+lembrar.
+
+=back
+
+=head1 MÉTODOS
+
+=head2 new_cart
+
+Instancia L<Business::CPI::Cart> conectado a esta gateway.
+
+=head2 query_transactions
+
+=over 4
+
+=item Argumentos:
+
+    start_date: DateTime
+    end_date: DateTime
+    page: Integer
+    rows: Integer
+
+=item Retorno:
+
+    current_page: Integer
+    results_in_this_page: Integer
+    total_pages: Integer
+    transactions: Array
+
+=back
+
+Pesquisa transações efetuadas nesta conta.
+
+=head2 get_transaction_details
+
+=over 4
+
+=item Argumentos: código da transação
+
+=item Retorno:
+
+    {
+        payment_id             => $ref,
+        gateway_transaction_id => $code,
+        status                 => $status
+        amount                 => $amount,
+        date                   => $date,
+        net_amount             => $net,
+        fee                    => $fee,
+        exchange_rate          => $exchange_rate,
+        payer => {
+            name => $payer_name,
+            email => $payer_email,
+        },
+    }
+
+=back
+
+Busca detalhes de uma determinada transação.
+
+=head2 notify
+
+=over 4
+
+=item Argumentos: requisição contendo dados postados pelo gateway
+
+=item Retorno:
+
+    {
+        payment_id             => $ref,
+        gateway_transaction_id => $code,
+        status                 => $status
+        amount                 => $amount,
+        date                   => $date,
+        net_amount             => $net,
+        fee                    => $fee,
+        exchange_rate          => $exchange_rate,
+        payer => {
+            name => $payer_name,
+            email => $payer_email,
+        },
+    }
+
+=back
+
+Notificação do gateway, executado quando este envia um HTTP POST para a
+aplicação, e esta deve registrar uma mudança de status. Veja IPN do PayPal,
+notificações no PagSeguro, ou NASP no Moip, por exemplo.
